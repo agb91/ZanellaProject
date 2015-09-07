@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<grafo>
+    <nodo>
+        <nome>primo</nome>
+        <lettera>a</lettera>
+        <osservabilita>y</osservabilita>
+        <guasto>n</guasto>   
+        <destinazione>secondo</destinazione>          
+     </nodo>
+     <nodo>
+        <nome>secondo</nome>
+     </nodo>
+</grafo>
