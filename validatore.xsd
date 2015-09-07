@@ -1,0 +1,21 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="grafo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="nodo" maxOccurs="unbounded" minOccurs="1">
+          <xs:complexType>
+              <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element type="xs:string" name="nome" minOccurs = "1" maxOccurs = "1"/>
+              <xs:element type="xs:string" name="lettera"/>
+              <xs:element type="xs:string" name="osservabilita"/>
+              <xs:element type="xs:string" name="guasto"/>
+              <xs:element type="xs:string" name="destinazione"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+
+
