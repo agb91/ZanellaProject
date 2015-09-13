@@ -8,7 +8,7 @@ public class Nodo {
 	private int contaCicli = 0; //a volte è utile un contatore per capire se un ciclo 
 	//passa troppe volte per il nodo e smascherare un deathlock
 	
-	private boolean raggiungibile = false;  // è raggiungibile? lo decide un programma esterno
+	//private boolean raggiungibile = false;  // è raggiungibile? lo decide un programma esterno
 	//poi setta la risposta (ovviamente il programma esterno conosce l'intero grafo.. nodo no)
 	Vector <Transizione> transizioni = new Vector<Transizione>(); // ogni nodo ha transizioni USCENTI
 
@@ -130,7 +130,7 @@ public class Nodo {
 		return transizioni;		
 	}
 	
-	//la raggiungibilità viene decretata da una classe esterna che ne sa di più
+	/*//la raggiungibilità viene decretata da una classe esterna che ne sa di più
 	public void setRaggiungibile(boolean b)
 	{
 		raggiungibile = b;
@@ -140,7 +140,7 @@ public class Nodo {
 	public boolean getRaggiungibile()
 	{
 		return raggiungibile;
-	}
+	}*/
 	
 	public String getNome()
 	{

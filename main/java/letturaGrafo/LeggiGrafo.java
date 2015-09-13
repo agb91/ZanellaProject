@@ -17,6 +17,7 @@ import org.w3c.dom.NodeList;
 public class LeggiGrafo {
 	
 	String path;
+	static Boolean validato=false;
 	
   public LeggiGrafo (String _path)  //costruito con il path di un file xml
   {
@@ -28,47 +29,50 @@ public class LeggiGrafo {
   //tag con errori ortografici o xml non ben formato
   static boolean validate(String xml, String xsd)
   {
-	  boolean risp = false;
-	      try {
-		// 1. Lookup a factory for the W3C XML Schema language
-	      SchemaFactory factory = 
-	          SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-	      
-	      // 2. Compile the schema. 
-	      // Here the schema is loaded from a java.io.File, but you could use 
-	      // a java.net.URL or a javax.xml.transform.Source instead.
-	      File schemaLocation = new File("src/"+xsd);
-	      Schema schema = factory.newSchema(schemaLocation);
-	  
-	      // 3. Get a validator from the schema.
-	      Validator validator = schema.newValidator();
-	      
-	      // 4. Parse the document you want to check.
-	      Source source = new StreamSource(xml);
-	      
-	      // 5. Check the document
-
-          validator.validate(source);
-          System.out.println(xml + " is valid.");
-          risp = true;
-          return true;
-      }
-      catch (SAXException ex) {
-          System.out.println(xml + " is not valid because ");
-          System.out.println(ex.getMessage());
-          risp = false;
-          return false;
-      } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-		return risp;  
-      
+	  if(!validato)
+	  {
+		  boolean risp = false;
+		      try {
+			// 1. Lookup a factory for the W3C XML Schema language
+		      SchemaFactory factory = 
+		          SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+		      
+		      // 2. Compile the schema. 
+		      // Here the schema is loaded from a java.io.File, but you could use 
+		      // a java.net.URL or a javax.xml.transform.Source instead.
+		      File schemaLocation = new File("src/"+xsd);
+		      Schema schema = factory.newSchema(schemaLocation);
+		  
+		      // 3. Get a validator from the schema.
+		      Validator validator = schema.newValidator();
+		      
+		      // 4. Parse the document you want to check.
+		      Source source = new StreamSource(xml);
+		      
+		      // 5. Check the document
+	
+	          validator.validate(source);
+	          System.out.println(xml + " is valid.");
+	          risp = true;
+	          return true;
+	      }
+	      catch (SAXException ex) {
+	          System.out.println(xml + " is not valid because ");
+	          System.out.println(ex.getMessage());
+	          System.exit(1);
+	          risp = false;
+	          return false;
+	      } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	        System.out.println(e.getMessage());
+	        System.exit(1);
+		}
+			return risp;  
+	  }
+	  else return true;
   }
-  
-
-
-  
+    
   public int getNumNodi() //per sapere quanti nodi ci sono nel file xml
   //NDR: INTENDO QUANTI TAG DI TIPO NODO!
   {
@@ -90,6 +94,8 @@ public class LeggiGrafo {
 			}
 	  } catch (Exception e) {
 			e.printStackTrace();
+            System.out.println(e.getMessage());
+            System.exit(1);
 	  }
 	  return num;
   }
@@ -101,6 +107,7 @@ public class LeggiGrafo {
 	  String contenuto = "";
 	  try {		
 		  if(validate(path,"validatore.xsd")){//se non supera la validazione base col documento non si procede..
+			validato = true;
 			File fXmlFile = new File(path);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -190,7 +197,9 @@ public class LeggiGrafo {
 			}
 		 	} 
     } catch (Exception e) {
-	e.printStackTrace();
+		e.printStackTrace();
+	    System.out.println(e.getMessage());
+	    System.exit(1);
     }
 	 // System.out.println("LEGGI GRAFO RENDE:"+contenuto);
 	  

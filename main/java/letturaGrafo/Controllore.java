@@ -5,6 +5,7 @@ public class Controllore {
 	
 	private Vector<Nodo> grafo = new Vector<Nodo>();
 	private Vector<Transizione> transizioni = new Vector<Transizione>();
+	int massimaLunghezzaGrafo; //PROVVISORIO
 	
 	public Controllore(Vector<Nodo> g)
 	{
@@ -14,6 +15,7 @@ public class Controllore {
 			Nodo n = grafo.get(i);
 			transizioni.addAll(n.getTransizioniTutte());
 		}
+		massimaLunghezzaGrafo = grafo.size();
 	}
 	
 	public boolean valida() // conto i problemi: ogni funzione aggiunge 1 se c'è un problema
@@ -34,13 +36,26 @@ public class Controllore {
 			problemi += daOgniUscitaOsservabile(); // da ogni uscita si può raggiungere un evento osservabile
 			//System.out.println("fatto");
 		}
-		problemi += ogniStatoRaggiungibile();//ogni stato deve essere raggiungibile
-		problemi += guastiNonOsservabili();//i guasti devono essere non osservabili
-		problemi += transizioniGemelle(); //niente transazioni gemelle (stesso nome, stessa sorgente, 
-		//stessa destinazione, stessa situazione di guasto)
-		problemi += noDoppioni();  //NO DOPPIONI NEL NOME DELLO STATO, SI NEL NOME DELLA TRANSIZIONI
-		problemi += sconnesso(); //l'uscita non corrisponde a stati esistenti
-				
+		if(problemi==0)
+		{
+		   problemi += ogniStatoRaggiungibile();//ogni stato deve essere raggiungibile
+		}
+		if(problemi==0)
+		{
+		   problemi += guastiNonOsservabili();//i guasti devono essere non osservabili
+		}
+		if(problemi==0)
+		{
+		   problemi += transizioniGemelle(); //niente transazioni gemelle (stesso nome, stessa sorgente, 
+		}//stessa destinazione, stessa situazione di guasto)
+		if(problemi==0)
+		{
+		   problemi += noDoppioni();  //NO DOPPIONI NEL NOME DELLO STATO, SI NEL NOME DELLA TRANSIZIONI
+		}
+		if(problemi==0)
+		{
+		   problemi += sconnesso(); //l'uscita non corrisponde a stati esistenti
+		}		
 		System.out.println("\n----------------------------------------------------------------------------\n");
 		if (problemi==0)
 		{
@@ -57,30 +72,59 @@ public class Controllore {
 	}
 	
 	private int ogniStatoRaggiungibile()
+	//algoritmo: dall'origine vedo quali sono le destinazioni raggiungibili, da queste destinazione
+	//vero quali sono le destinazioni raggiungibili, e avanti così
 	{
-		int ris = 0;
-		for (int i = 1; i<grafo.size(); i++)//non controllo la sorgente!
+		int ris;
+		Vector<Nodo> raggiungibili = new Vector<Nodo>();
+		raggiungibili.add(grafo.get(0));//la sorgente è raggiungibile per definizione
+		Vector<String> destinazioni = new Vector<String>();
+		int cont=0;
+		do
 		{
-			int ragg = 1;
-			String nome = grafo.get(i).getNome();
-			for (int a=0; a<transizioni.size(); a++)
+			for (int i=0; i<raggiungibili.size(); i++)
 			{
-				if(transizioni.get(a).getDest().equalsIgnoreCase(nome))
-				{
-					ragg = 0;
-				}
+				destinazioni.addAll(raggiungibili.get(i).getTutteDest());
 			}
-			if(ragg==1)
+			for(int i=0; i<destinazioni.size(); i++)
 			{
-				ris=1;
-				System.out.println("errore stato "+ grafo.get(i).getNome()+" non raggiungibile");
+				raggiungibili = aggiungiNodoPerNomeSeNonDoppioni(raggiungibili,destinazioni.get(i));
+				
 			}
+			destinazioni.clear();
+			cont++;
+		}while(cont<massimaLunghezzaGrafo);
+		
+		if(raggiungibili.size()<grafo.size())
+		{
+			System.out.println("problema stati raggiungibili:"
+					+ " mi risultano "+raggiungibili.size() + " stati raggingibili"
+					+ " su un totale di "+grafo.size()+" stati");
+			ris=1;
 		}
-		if(ris==0)
+		else
 		{
-			System.out.println("controllo raggiungibilità:   OK");
+			ris=0;
+			System.out.println("raggiungibilità di ogni stato:  Ok");
 		}
 		return ris;
+	}
+	
+	private Vector<Nodo> aggiungiNodoPerNomeSeNonDoppioni(Vector<Nodo> vettore, String nuovo )
+	{
+		Boolean aggiungi=true;
+		for(int a=0; a<vettore.size(); a++)
+		{
+			if(nuovo.equalsIgnoreCase(vettore.get(a).getNome()))
+			{
+				aggiungi=false;
+			}
+		}
+		if(aggiungi)
+		{
+		    vettore.add(getNodoByName(nuovo));
+		}
+		return vettore;
 	}
 	
 	private int guastiNonOsservabili() // 0 se ok 1 se ko
@@ -103,6 +147,8 @@ public class Controllore {
 		}
 		return ris;
 	}
+	
+	
 	
 	private int transizioniGemelle()//1 se ci sono transizioni identiche
 	//(anche dal punto di vista del guasto{cosa non concessa} 0 se tutto ok)
@@ -224,7 +270,7 @@ public class Controllore {
 	//CHE QUESTO CICLO NON ABBIA TRANSIZIONI RAGGIUNGIBILI
 	{
 		boolean problemi = true;
-		if(n.getCicli()>100)
+		if(n.getCicli()>massimaLunghezzaGrafo)
 		{
 			//System.out.println("sono il nodo: "+ n.getNome() + " è la 100 volta..");
 			return true;
