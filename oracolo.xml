@@ -61,15 +61,15 @@
       <nodo>
         <nome>sesto</nome>
         <lettera>c</lettera>
-        <osservabilita>y</osservabilita>
+        <osservabilita>n</osservabilita>
         <guasto>n</guasto>   
         <destinazione>sesto</destinazione> 
       </nodo>  
-      <nodo>
+      <!-- <nodo>
         <nome>balordo</nome>
         <lettera>c</lettera>
         <osservabilita>y</osservabilita>
         <guasto>n</guasto>   
         <destinazione>balordo</destinazione> 
-      </nodo>       
+      </nodo>        -->
 </grafo>
